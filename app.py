@@ -1,108 +1,39 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- 1. PAGE CONFIGURATION ---
-st.set_page_config(page_title="Lead Like Fred", page_icon="👟")
+st.title("🔧 Mechanic Mode")
 
-# --- 2. HEADER ---
-st.title("👟 Lead Like Fred: Staff Training")
-st.markdown("""
-**Welcome.** This is a safe space to practice the core concepts of our leadership model. 
-I am an AI coach trained on the Facilitator's Guide.
-""")
-
-# --- 3. API SETUP ---
+# 1. Try to connect
 try:
     api_key = st.secrets["GOOGLE_API_KEY"]
     genai.configure(api_key=api_key)
+    st.success("✅ API Key found.")
 except Exception as e:
-    st.error("⚠️ API Key missing! Check your Streamlit Secrets.")
+    st.error(f"❌ API Key setup failed: {e}")
     st.stop()
 
-# --- 4. THE BRAIN (INSTRUCTIONS) ---
-# We will pass this as a "fake" user message so it works on ALL versions.
-fred_instructions = """
-INSTRUCTIONS:
-You are an expert Facilitator for 'Lead Like Fred'. 
-Your goal: Guide the user through the 8-week Facilitator Guide.
-
-TEACHING RULES:
-1. Instruct First: Explain the concept briefly (2-3 sentences).
-2. Quiz Second: Ask a scenario-based question.
-3. Feedback Loop: Validate correct answers warmly. Correct wrong answers gently (Sandwich Method).
-
-CURRICULUM:
-1. Intro & Oxygen Mask (Self-Regulation)
-2. The Facilitator Stance (Slowness)
-3. Co-Regulation & Neuroception
-4. The Worth Sandwich
-5. Repair & Re-entry
-6. Final Quiz
-"""
-
-# --- 5. CHAT HISTORY INITIALIZATION ---
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# 2. Ask Google what models are available
+st.write("### 📡 Contacting Google...")
+try:
+    # List all models available to this API Key
+    models = list(genai.list_models())
     
-    # The Intro Text (What the user sees)
-    intro_text = """
-    **Hello neighbor.** Welcome to 'Lead Like Fred.' 
-    
-    **Let's start with Concept 1: The Oxygen Mask.**
-    
-    You know the rule on airplanes: *"Put your own mask on before helping others."* In our work, this means **Self-Regulation**. If you walk into the cottage stressed, you broadcast "DANGER" to the kids.
-    
-    **Question:**
-    If you had a terrible morning and are feeling frantic, what is one specific 5-minute thing you could do to "put on your oxygen mask" before you unlock the cottage door?
-    """
-    st.session_state.messages.append({"role": "model", "content": intro_text})
+    found_models = []
+    for m in models:
+        # We only care about models that can "generateContent" (chat)
+        if 'generateContent' in m.supported_generation_methods:
+            found_models.append(m.name)
 
-# --- 6. DISPLAY CHAT ---
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if found_models:
+        st.success(f"🎉 Success! We found {len(found_models)} available models.")
+        st.write("Here is the exact list of what your Key can access:")
+        st.code(found_models)
+        st.write("---")
+        st.write("**Next Step:** Copy one of these names exactly (e.g., `models/gemini-pro`) and paste it into your real app code.")
+    else:
+        st.error("❌ Connection successful, but your API Key has access to ZERO models.")
+        st.warning("This usually means the 'Generative Language API' is not enabled for your project in the Google Cloud Console.")
 
-# --- 7. USER INPUT & LOGIC ---
-if prompt := st.chat_input("Type your response here..."):
-    
-    # Show User Message
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
-
-    # Generate Response
-    with st.chat_message("model"):
-        response_placeholder = st.empty()
-        response_placeholder.markdown("Thinking...")
-        
-        try:
-            # USE THE OLDER, STABLE MODEL
-            model = genai.GenerativeModel("gemini-pro")
-            
-            # --- THE TRICK ---
-            # We manually build the history to include the instructions hidden at the start.
-            # This works on ALL versions of the library.
-            history_for_ai = []
-            
-            # 1. Inject the Instructions as a "User" message
-            history_for_ai.append({'role': 'user', 'parts': [fred_instructions]})
-            
-            # 2. Inject a fake "Model" agreement
-            history_for_ai.append({'role': 'model', 'parts': ["Understood. I am ready to teach."]})
-            
-            # 3. Add the actual chat history
-            for m in st.session_state.messages[:-1]: # Exclude the very last prompt (sent separately)
-                history_for_ai.append({'role': m['role'], 'parts': [m['content']]})
-
-            # Start the chat with this "injected" history
-            chat = model.start_chat(history=history_for_ai)
-            
-            # Send the new prompt
-            response = chat.send_message(prompt)
-            
-            # Show result
-            response_placeholder.markdown(response.text)
-            st.session_state.messages.append({"role": "model", "content": response.text})
-            
-        except Exception as e:
-            response_placeholder.error(f"Error: {e}")
+except Exception as e:
+    st.error(f"❌ Critical Connection Error: {e}")
+    st.write("This usually means the API Key is invalid, or you are in a blocked region.")
