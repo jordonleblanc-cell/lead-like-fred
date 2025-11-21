@@ -4,30 +4,27 @@ import google.generativeai as genai
 # --- 1. PAGE CONFIGURATION ---
 st.set_page_config(page_title="Lead Like Fred", page_icon="👟")
 
-# --- 2. VISUAL WELCOME (PHOTO & QUOTE) ---
-# This section runs FIRST, so it appears at the top of every screen
-col1, col2, col3 = st.columns([1, 2, 1])
+# --- 2. HEADER SECTION ---
+# Title goes first now
+st.title("👟 Lead Like Fred: Staff Training")
 
-with col2:
-    # Fred's Photo
-    st.image("https://upload.wikimedia.org/wikipedia/commons/3/35/Fred_Rogers_1969_publicity_photo.jpg", 
-             use_container_width=True)
+# The New Photo (Centered)
+st.image(
+    "https://media.npr.org/assets/img/2018/02/09/ap_96010104170_wide-f1c5fd90ee96b83057e6edb0379889cafd85ba2a.jpg?s=800&c=85&f=webp", 
+    use_container_width=True
+)
 
-# The Seminal Quote (Centered and Italicized)
+# The Quote (Standard Font, Centered via Markdown)
 st.markdown(
     """
-    <h3 style='text-align: center; color: #2E4053; font-style: italic; font-family: serif;'>
+    <div style='text-align: center; margin-bottom: 30px;'>
     "You've made this day a special day, by just your being you. There's no person in the whole world like you, and I like you just the way you are."
-    </h3>
-    <hr>
+    </div>
     """, 
     unsafe_allow_html=True
 )
 
-st.title("👟 Lead Like Fred: Staff Training")
-
 # --- 3. NAME GATE ---
-# We check if we know the user's name. If not, we ask.
 if "user_name" not in st.session_state:
     st.session_state.user_name = ""
 
@@ -41,9 +38,9 @@ if not st.session_state.user_name:
         
         if submitted and name_input:
             st.session_state.user_name = name_input
-            st.rerun()  # Reloads the app to show the chat below the photo
+            st.rerun()
     
-    st.stop()  # Stops here until name is entered
+    st.stop()
 
 # --- 4. API SETUP ---
 try:
