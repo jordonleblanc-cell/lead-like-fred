@@ -5,16 +5,15 @@ import google.generativeai as genai
 st.set_page_config(page_title="Lead Like Fred", page_icon="👟")
 
 # --- 2. HEADER SECTION ---
-# Title goes first now
 st.title("👟 Lead Like Fred: Staff Training")
 
-# The New Photo (Centered)
+# The Photo
 st.image(
     "https://media.npr.org/assets/img/2018/02/09/ap_96010104170_wide-f1c5fd90ee96b83057e6edb0379889cafd85ba2a.jpg?s=800&c=85&f=webp", 
     use_container_width=True
 )
 
-# The Quote (Standard Font, Centered via Markdown)
+# The Quote
 st.markdown(
     """
     <div style='text-align: center; margin-bottom: 30px;'>
@@ -93,7 +92,7 @@ CURRICULUM ORDER:
 if "messages" not in st.session_state:
     st.session_state.messages = []
     
-    # Deeply Empathetic Intro Text
+    # Deeply Empathetic Intro Text (Updated Examples)
     intro_text = f"""
     **Hello, {st.session_state.user_name}.** It is such a gift to be with you today.
     
@@ -106,7 +105,7 @@ if "messages" not in st.session_state:
     Fred knew that we cannot give what we do not have. If you are running on empty, you cannot offer calm to a child in crisis. 
     
     **I want to ask you something personal, {st.session_state.user_name}:**
-    When the shift gets chaotic and loud, what is one small thing you do—or *could* do—to protect your own peace for just a moment? (Maybe a deep breath, a sip of water, or a quick prayer?)
+    When the shift gets chaotic and loud, what is one small thing you do—or *could* do—to protect your own peace for just a moment? (Maybe a deep breath, a sip of water, or listening to a favorite song?)
     """
     
     st.session_state.messages.append({"role": "model", "content": intro_text})
