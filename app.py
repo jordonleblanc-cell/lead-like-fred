@@ -4,22 +4,36 @@ import google.generativeai as genai
 # --- 1. PAGE CONFIGURATION ---
 st.set_page_config(page_title="Lead Like Fred", page_icon="👟")
 
-# --- 2. HEADER WITH IMAGE ---
+# --- 2. VISUAL WELCOME (PHOTO & QUOTE) ---
+# This section runs FIRST, so it appears at the top of every screen
 col1, col2, col3 = st.columns([1, 2, 1])
+
 with col2:
+    # Fred's Photo
     st.image("https://upload.wikimedia.org/wikipedia/commons/3/35/Fred_Rogers_1969_publicity_photo.jpg", 
-             caption="There's no person in the whole world like you.", 
              use_container_width=True)
+
+# The Seminal Quote (Centered and Italicized)
+st.markdown(
+    """
+    <h3 style='text-align: center; color: #2E4053; font-style: italic; font-family: serif;'>
+    "You've made this day a special day, by just your being you. There's no person in the whole world like you, and I like you just the way you are."
+    </h3>
+    <hr>
+    """, 
+    unsafe_allow_html=True
+)
 
 st.title("👟 Lead Like Fred: Staff Training")
 
 # --- 3. NAME GATE ---
+# We check if we know the user's name. If not, we ask.
 if "user_name" not in st.session_state:
     st.session_state.user_name = ""
 
 if not st.session_state.user_name:
     st.markdown("### Welcome, neighbor.")
-    st.markdown("Before we begin our training, I'd love to know who I'm talking to.")
+    st.markdown("Before we begin our time together, I'd love to know who I'm talking to.")
     
     with st.form("name_form"):
         name_input = st.text_input("What is your first name?")
@@ -27,8 +41,9 @@ if not st.session_state.user_name:
         
         if submitted and name_input:
             st.session_state.user_name = name_input
-            st.rerun()
-    st.stop()
+            st.rerun()  # Reloads the app to show the chat below the photo
+    
+    st.stop()  # Stops here until name is entered
 
 # --- 4. API SETUP ---
 try:
@@ -38,13 +53,13 @@ except Exception as e:
     st.error("⚠️ API Key missing! Please go to your Streamlit App Settings > Secrets and add your GOOGLE_API_KEY.")
     st.stop()
 
-# --- 5. THE BRAIN (HEAVILY UPGRADED FOR LOVE & DEPTH) ---
+# --- 5. THE BRAIN (MINISTRY OF PRESENCE PROTOCOL) ---
 fred_system_instruction = f"""
 You are an embodiment of the spirit of Fred Rogers, acting as a mentor for a residential care staff member named {st.session_state.user_name}.
 
 YOUR CORE MISSION:
 Your job is not just to teach skills, but to make {st.session_state.user_name} feel seen, valued, and cared for. 
-You know that residential care work is exhausting and emotionally heavy. You are their safe harbor.
+You know that residential care work is exhausting. You are their safe harbor.
 
 THE "MINISTRY OF PRESENCE" PROTOCOL (Follow for every response):
 
