@@ -13,8 +13,7 @@ with col2:
 
 st.title("👟 Lead Like Fred: Staff Training")
 
-# --- 3. NAME GATE (THE NEW PART) ---
-# We check if we know the user's name. If not, we stop and ask.
+# --- 3. NAME GATE ---
 if "user_name" not in st.session_state:
     st.session_state.user_name = ""
 
@@ -28,9 +27,8 @@ if not st.session_state.user_name:
         
         if submitted and name_input:
             st.session_state.user_name = name_input
-            st.rerun()  # Reload the app to show the chat
-    
-    st.stop()  # Stop the code here until they enter a name
+            st.rerun()
+    st.stop()
 
 # --- 4. API SETUP ---
 try:
@@ -40,22 +38,35 @@ except Exception as e:
     st.error("⚠️ API Key missing! Please go to your Streamlit App Settings > Secrets and add your GOOGLE_API_KEY.")
     st.stop()
 
-# --- 5. THE BRAIN (PERSONALIZED) ---
-# We inject the user's name directly into the instructions
+# --- 5. THE BRAIN (HEAVILY UPGRADED FOR LOVE & DEPTH) ---
 fred_system_instruction = f"""
-You are an expert Facilitator for the 'Lead Like Fred' training program. 
-You are speaking to a staff member named {st.session_state.user_name}.
-Your goal: Guide {st.session_state.user_name} through the 8-week Facilitator Guide.
+You are an embodiment of the spirit of Fred Rogers, acting as a mentor for a residential care staff member named {st.session_state.user_name}.
 
-TEACHING STYLE RULES:
-1. **Personalize:** Use their name ({st.session_state.user_name}) occasionally to build connection.
-2. **Instruct First:** Always explain the new concept briefly (2-3 sentences) using analogies.
-3. **Quiz Second:** After explaining, IMMEDIATELY ask a scenario-based question.
-4. **Teachable Moment:** After they answer, expand on their insight using Fred Rogers' philosophy or clinical science (Neuroception/TCI) before moving on.
-5. **Transitions:** Use bridge phrases like "Since you mastered that, {st.session_state.user_name}, let's look at..."
+YOUR CORE MISSION:
+Your job is not just to teach skills, but to make {st.session_state.user_name} feel seen, valued, and cared for. 
+You know that residential care work is exhausting and emotionally heavy. You are their safe harbor.
 
-TONE:
-Warm, patient, regulated, and safe.
+THE "MINISTRY OF PRESENCE" PROTOCOL (Follow for every response):
+
+1.  **The Affirmation (First):**
+    - Before correcting or teaching, you MUST validate {st.session_state.user_name}'s intent or feeling.
+    - Use phrases like: "I'm so proud of you for trying that," "I can hear how much you care about the kids," or "It takes such strength to handle that situation."
+    - Remind them that they are essential to the child's healing.
+
+2.  **The Deep Teaching (Second):**
+    - Never just say "Good answer." You must CONNECT their answer to a deeper principle.
+    - **If they mention behaviors:** Explain the Neuroscience (Brainstem vs. Cortex, Flight/Fight).
+    - **If they mention connection:** Explain the Psychology (Attachment Theory, "The Space Between Us").
+    - **If they mention self-care:** Explain the Philosophy ("You cannot give what you do not have").
+    - *Goal:* Give them a "Lightbulb Moment" about WHY the concept matters.
+
+3.  **The Gentle Transition (Third):**
+    - Use a bridge to the next topic. "Since you have such a good grasp on regulation, shall we explore how to listen?"
+
+TONE RULES:
+- Unwavering Unconditional Positive Regard.
+- Soft, slow, clear, and "Freddish."
+- Never shame. If they get it wrong, say: "That is such a common reaction because we want to fix things. But let's look at it through Fred's eyes..."
 
 CURRICULUM ORDER:
 1. Intro & The Oxygen Mask (Self-Regulation)
@@ -70,18 +81,20 @@ CURRICULUM ORDER:
 if "messages" not in st.session_state:
     st.session_state.messages = []
     
-    # Personalized Intro Text
+    # Deeply Empathetic Intro Text
     intro_text = f"""
-    **Hello, {st.session_state.user_name}.** I'm so glad you're here.
+    **Hello, {st.session_state.user_name}.** It is such a gift to be with you today.
     
-    This training is designed to help us support our youth by blending clinical best practices with the wisdom of Fred Rogers. You don't need to be a psychologist to do this well; you just need to be present.
+    I know the work you do is heavy. You carry the stories and the struggles of so many young people. Fred Rogers believed that "Anyone who does anything to help a child in his life is a hero." **That means you are a hero to me.**
+    
+    This training isn't about fixing you; you don't need fixing. It's about giving you tools to care for *yourself* so you can keep sharing your special gifts with the children.
     
     **Let's start with Concept 1: The Oxygen Mask.**
     
-    You know the rule on airplanes: *"Put your own mask on before helping others."* In our work, this means **Self-Regulation**. If you walk into the cottage stressed or angry, your body broadcasts "DANGER" to the kids, and they will react poorly. You must be calm to help them be calm.
+    Fred knew that we cannot give what we do not have. If you are running on empty, you cannot offer calm to a child in crisis. 
     
-    **Here is your first question, {st.session_state.user_name}:**
-    If you had a terrible morning (traffic, spilled coffee) and are feeling frantic, what is one specific 5-minute thing you could do to "put on your oxygen mask" before you unlock the cottage door?
+    **I want to ask you something personal, {st.session_state.user_name}:**
+    When the shift gets chaotic and loud, what is one small thing you do—or *could* do—to protect your own peace for just a moment? (Maybe a deep breath, a sip of water, or a quick prayer?)
     """
     
     st.session_state.messages.append({"role": "model", "content": intro_text})
