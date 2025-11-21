@@ -86,6 +86,8 @@ if prompt := st.chat_input("Type your response here..."):
         
         try:
             # Initialize the model
+            # We use 'gemini-1.5-flash' which is fast and efficient.
+            # Ensure requirements.txt has google-generativeai>=0.7.0
             model = genai.GenerativeModel(
                 model_name="gemini-1.5-flash",
                 system_instruction=fred_system_instruction
