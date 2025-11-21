@@ -90,7 +90,7 @@ if prompt := st.chat_input("Type your response here..."):
             # Ensure requirements.txt has google-generativeai>=0.7.0
            # Initialize the model
             model = genai.GenerativeModel(
-                model_name="gemini-pro",  # <--- CHANGED THIS LINE
+               model_name="models/gemini-1.5-flash",  # <--- CHANGED THIS LINE
                 system_instruction=fred_system_instruction
             )
             
